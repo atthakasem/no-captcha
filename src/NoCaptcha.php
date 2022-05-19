@@ -86,11 +86,14 @@ class NoCaptcha
         if (!isset($attributes['data-callback'])) {
             $functionName = 'onSubmit' . str_replace(['-', '=', '\'', '"', '<', '>', '`'], '', $formIdentifier);
             $attributes['data-callback'] = $functionName;
-            $javascript = sprintf(
-                '<script>function %s(){document.getElementById("%s").submit();}</script>',
-                $functionName,
-                $formIdentifier
-            );
+            $javascript = "<script>
+            function $functionName() {
+                var form = document.getElementById(\"$formIdentifier\");
+                if (form.reportValidity()) {
+                    form.submit();
+                }
+            }
+            </script>";
         }
 
         $attributes = $this->prepareAttributes($attributes);
